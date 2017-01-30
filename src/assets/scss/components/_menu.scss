@@ -1,0 +1,41 @@
+.off-canvas{
+  background-color: #0a0a0a;
+  color: white;
+  padding: 4% 1%;
+
+  &-close-button{
+    display: inline-flex !important;
+  }
+
+  &-author-section{
+    padding-bottom: 20%;
+    border-bottom: 1px solid grey;
+    &-image{
+      border-radius: 50%;
+      width: 80%;
+      margin-bottom: 15%;
+    }
+  }
+
+  &-options{
+    padding: 20% 0;
+    border-bottom: 1px solid grey;
+  }
+
+  &-option{
+    .column{
+      padding: 0;
+    }
+  }
+
+  &-social-icons{
+    padding-top: 20%;
+    font-size: 1.5rem;
+  }
+}
+
+@media print, screen and (min-width: 64em){
+  .position-left.reveal-for-large[style="display: none;"] ~ .off-canvas-content {
+    margin-left: 0;
+  }
+}

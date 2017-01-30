@@ -3,10 +3,11 @@
 @import 'settings';
 @import 'foundation';
 @import 'motion-ui';
+@import 'font-awesome';
 
 @include foundation-global-styles;
-@include foundation-grid;
-// @include foundation-flex-grid;
+// @include foundation-grid;
+@include foundation-flex-grid;
 @include foundation-typography;
 @include foundation-button;
 @include foundation-forms;
@@ -45,7 +46,12 @@
 @include foundation-top-bar;
 @include foundation-visibility-classes;
 @include foundation-float-classes;
-// @include foundation-flex-classes;
+@include foundation-flex-classes;
 
 @include motion-ui-transitions;
 @include motion-ui-animations;
+
+
+// MY SCSS
+@import 'partials/resets';
+@import 'components/menu';

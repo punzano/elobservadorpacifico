@@ -25,24 +25,15 @@ function loadConfig() {
 }
 
 // Build the "dist" folder by running all of the below tasks
-gulp.task('build',
- gulp.series(clean, gulp.parallel(pages, sass, javascript, images, copy), styleGuide));
+gulp.task('build', gulp.series(clean, gulp.parallel(pages, sass, javascript, images, fonts, copyOthers)));
 
 // Build the site, run the server, and watch for file changes
-gulp.task('default',
-  gulp.series('build', server, watch));
+gulp.task('default', gulp.series('build', server, watch));
 
 // Delete the "dist" folder
 // This happens every time a build starts
 function clean(done) {
   rimraf(PATHS.dist, done);
-}
-
-// Copy files out of the assets folder
-// This task skips over the "img", "js", and "scss" folders, which are parsed separately
-function copy() {
-  return gulp.src(PATHS.assets)
-    .pipe(gulp.dest(PATHS.dist + '/assets'));
 }
 
 // Copy page templates into finished HTML files
@@ -57,19 +48,10 @@ function pages() {
     }))
     .pipe(gulp.dest(PATHS.dist));
 }
-
 // Load updated HTML templates and partials into Panini
 function resetPages(done) {
   panini.refresh();
   done();
-}
-
-// Generate a style guide from the Markdown content and HTML template in styleguide/
-function styleGuide(done) {
-  sherpa('src/styleguide/index.md', {
-    output: PATHS.dist + '/styleguide.html',
-    template: 'src/styleguide/template.html'
-  }, done);
 }
 
 // Compile Sass into CSS
@@ -116,6 +98,28 @@ function images() {
     .pipe(gulp.dest(PATHS.dist + '/assets/img'));
 }
 
+function fonts() {
+  return gulp.src(PATHS.fonts)
+    .pipe(gulp.dest(PATHS.dist + '/assets/fonts'));
+}
+
+// Copy files out of the assets folder
+// This task skips over the "img", "js", and "scss" folders, which are parsed separately
+function copyOthers() {
+  return gulp.src(PATHS.assets)
+    .pipe(gulp.dest(PATHS.dist + '/assets'));
+}
+
+// Watch for changes to static assets, pages, Sass, and JavaScript
+function watch() {
+  gulp.watch(PATHS.assets, copyOthers);
+  gulp.watch('src/pages/**/*.html').on('all', gulp.series(pages, browser.reload));
+  gulp.watch('src/{layouts,partials}/**/*.html').on('all', gulp.series(resetPages, pages, browser.reload));
+  gulp.watch('src/assets/scss/**/*.scss').on('all', gulp.series(sass, browser.reload));
+  gulp.watch('src/assets/js/**/*.js').on('all', gulp.series(javascript, browser.reload));
+  gulp.watch('src/assets/img/**/*').on('all', gulp.series(images, browser.reload));
+}
+
 // Start a server with BrowserSync to preview the site in
 function server(done) {
   browser.init({
@@ -128,15 +132,4 @@ function server(done) {
 function reload(done) {
   browser.reload();
   done();
-}
-
-// Watch for changes to static assets, pages, Sass, and JavaScript
-function watch() {
-  gulp.watch(PATHS.assets, copy);
-  gulp.watch('src/pages/**/*.html').on('all', gulp.series(pages, browser.reload));
-  gulp.watch('src/{layouts,partials}/**/*.html').on('all', gulp.series(resetPages, pages, browser.reload));
-  gulp.watch('src/assets/scss/**/*.scss').on('all', gulp.series(sass, browser.reload));
-  gulp.watch('src/assets/js/**/*.js').on('all', gulp.series(javascript, browser.reload));
-  gulp.watch('src/assets/img/**/*').on('all', gulp.series(images, browser.reload));
-  gulp.watch('src/styleguide/**').on('all', gulp.series(styleGuide, browser.reload));
 }
