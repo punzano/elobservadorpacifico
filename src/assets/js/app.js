@@ -7,6 +7,6 @@ $(document).ready(function() {
 
 function setEventHandlers(){
   $('#off-canvas-toggle-button').click(function(){
-    $('#offCanvasLeft').slideToggle(500, 'linear');
+    $('#offCanvasLeft').toggleClass('reveal-for-large');
   });
 }
