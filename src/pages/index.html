@@ -2,11 +2,11 @@
   <div id="off-canvas-menu" class="off-canvas position-left reveal-for-large" data-off-canvas data-closable="slide-out-left" data-close-on-click="false">
     {{> menu}}
   </div>
-  <div id="off-canvas-content" class="off-canvas-content" data-off-canvas-content>
-    <div class="title-bar">
+  <div id="off-canvas-content" class="off-canvas-content column" data-off-canvas-content>
+    <div class="title-bar row">
       <div class="title-bar-left">
         <button id="off-canvas-content-toggle-button" class="menu-icon off-canvas-content-toggle-button" type="button" data-toggle="off-canvas-menu"></button>
-        <span>Últimas entradas</span>
+        <span id="off-canvas-content-section-name">Últimas entradas</span>
       </div>
     </div>
     {{> entries}}
