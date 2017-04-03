@@ -52,7 +52,7 @@ app.get("/posts", function(request, response){
                     response.status(500).end();
                 } else {
                     console.log("[/posts]: Connection stablished with the collection 'posts'.");
-                    collection.find({}, {date: 1, title: 1, img: 1, category: 1})
+                    collection.find({}, {date: 1, title: 1, img: 1, category: 1, comments: 1, likes: 1, shares: 1})
                         .sort({date: 1})
                         .toArray(function(error, documents){
                             if(error){
@@ -96,7 +96,7 @@ app.get("/posts/:category", function(request, response){
                     response.status(500).end();
                 } else {
                     console.log("[/posts]: Connection stablished with the collection 'posts'.");
-                    collection.find({category: request.params.category}, {date: 1, title: 1, img: 1, category: 1})
+                    collection.find({category: request.params.category}, {date: 1, title: 1, img: 1, category: 1, comments: 1, likes: 1, shares: 1})
                         .sort({date: 1})
                         .toArray(function(error, documents){
                             if(error){
@@ -121,7 +121,7 @@ app.get("/posts/:category", function(request, response){
     });
 });
 
-app.get("/posts/:postID", function(request, response){
+app.get("/post/:postID", function(request, response){
     var database = new mongodb.Db(databaseConfig.databaseName, server, {});
 
     database.open(function (error, databaseConnection) {
@@ -141,7 +141,7 @@ app.get("/posts/:postID", function(request, response){
                 } else {
                     console.log("[/posts/" + request.params.postID + "]: Connection stablished with the collection 'posts'.");
                     collection
-                        .find({category: "prueba", _id: ObjectID(request.params.postID)})
+                        .find({_id: ObjectID(request.params.postID)})
                         .sort({date: 1})
                         .toArray(function(error, documents){
                             if(error){

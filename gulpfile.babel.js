@@ -25,7 +25,7 @@ function loadConfig() {
 }
 
 // Build the "dist" folder by running all of the below tasks
-gulp.task('build', gulp.series(clean, gulp.parallel(pages, sass, javascript, images, fonts, copyOthers)));
+gulp.task('build', gulp.series(clean, gulp.parallel(pages, otherPages, sass, javascript, images, fonts, copyOthers)));
 
 // Build the site, run the server, and watch for file changes
 gulp.task('default', gulp.series('build', /*server,*/ watch));
@@ -43,7 +43,7 @@ function pages() {
       root: 'src/pages/',
       layouts: 'src/layouts/',
       partials: 'src/partials/',
-      data: 'src/data/',
+      // data: 'src/data/',
       helpers: 'src/helpers/'
     }))
     .pipe(gulp.dest(PATHS.dist));
@@ -52,6 +52,11 @@ function pages() {
 function resetPages(done) {
   panini.refresh();
   done();
+}
+
+function otherPages() {
+  return gulp.src('src/partials/**/*.{html,hbs,handlebars}')
+    .pipe(gulp.dest(PATHS.dist));
 }
 
 // Compile Sass into CSS
@@ -114,6 +119,7 @@ function copyOthers() {
 function watch() {
   gulp.watch(PATHS.assets, copyOthers);
   gulp.watch('src/pages/**/*.html').on('all', gulp.series(pages, browser.reload));
+  gulp.watch('src/partials/**/*.{html,hbs,handlebars}').on('all', gulp.series(otherPages, browser.reload));
   gulp.watch('src/{layouts,partials}/**/*.html').on('all', gulp.series(resetPages, pages, browser.reload));
   gulp.watch('src/assets/scss/**/*.scss').on('all', gulp.series(sass, browser.reload));
   gulp.watch('src/assets/js/**/*.js').on('all', gulp.series(javascript, browser.reload));
