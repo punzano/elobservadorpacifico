@@ -38,17 +38,16 @@
     "compression": "^1.6.2",
     "express": "^4.13.4",
     "extend": "^3.0.0",
-    "mongodb": "^2.1.19",
-    "node-cron": "^1.1.1",
-    "nodemailer": "^0.7.1",
-    "nodemailer-smtp-transport": "^2.5.0"
+    "mongodb": "^2.1.19"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/punzano/elobservadorpacifico"
   },
   "babel": {
-    "presets": ["es2015"]
+    "presets": [
+      "es2015"
+    ]
   },
   "private": true
 }

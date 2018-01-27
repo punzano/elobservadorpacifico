@@ -11,6 +11,12 @@
         height: 88%;
         width: 68%;
         margin: 6% 16%;
+
+        .content-column-box-img {
+          z-index: 11;
+          position: relative;
+        }
+
         .content-column-box-title {
           font-size: 1.1em;
         }

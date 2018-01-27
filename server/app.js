@@ -3,14 +3,11 @@ var extend = require("extend");
 var express = require("express");
 var bodyParser = require("body-parser");
 var mongodb = require("mongodb");
+var MongoClient = require("mongodb").MongoClient;
 var ObjectID = mongodb.ObjectID;
-var nodemailer = require("nodemailer");
-var smtpTransport = require("nodemailer-smtp-transport");
 var crypto = require("crypto");
 var compression = require("compression");
-var nodeCron = require("node-cron");
 
-const router = express.Router();
 const app = express();
 
 app.use(compression());
@@ -23,20 +20,18 @@ app.use("/assets/js", express.static("../dist/assets/js"));
 app.use("/assets/css", express.static("../dist/assets/css"));
 app.use(express.static("../dist"));
 
-
-
 const databaseConfig = {
-    host: "localhost",
-    port: 27017,
-    databaseName: "elobservadorpacifico"
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    databaseName: process.env.DB_NAME,
+    poolSize: process.env.DB_POOL_SIZE,
+    autoReconnect: true
 }
 
-var server = new mongodb.Server(databaseConfig.host, databaseConfig.port, {});
+var mongoUrl = "mongodb://" + databaseConfig.host + ":" + databaseConfig.port + "/" + databaseConfig.databaseName;
 
 app.get("/posts", function(request, response){
-    var database = new mongodb.Db(databaseConfig.databaseName, server, {});
-
-    database.open(function (error, databaseConnection) {
+    MongoClient.connect(mongoUrl, {poolSize: databaseConfig.poolSize, autoReconnect: databaseConfig.autoReconnect}, function (error, databaseConnection) {
         if(error){
             console.log("[/posts]: " + error);
             databaseConnection.close();
@@ -52,8 +47,8 @@ app.get("/posts", function(request, response){
                     response.status(500).end();
                 } else {
                     console.log("[/posts]: Connection stablished with the collection 'posts'.");
-                    collection.find({}, {date: 1, title: 1, img: 1, category: 1, comments: 1, likes: 1, shares: 1})
-                        .sort({date: 1})
+                    collection.find({}, {date: 1, title: 1, img: 1, categories: 1, comments: 1, likes: 1, shares: 1})
+                        .sort({date: -1})
                         .toArray(function(error, documents){
                             if(error){
                                 console.log("[/posts]: " + error);
@@ -78,9 +73,7 @@ app.get("/posts", function(request, response){
 });
 
 app.get("/posts/:category", function(request, response){
-    var database = new mongodb.Db(databaseConfig.databaseName, server, {});
-
-    database.open(function (error, databaseConnection) {
+    MongoClient.connect(mongoUrl, {poolSize: databaseConfig.poolSize, autoReconnect: databaseConfig.autoReconnect}, function (error, databaseConnection) {
         if(error){
             console.log("[/posts]: " + error);
             databaseConnection.close();
@@ -96,8 +89,8 @@ app.get("/posts/:category", function(request, response){
                     response.status(500).end();
                 } else {
                     console.log("[/posts]: Connection stablished with the collection 'posts'.");
-                    collection.find({category: request.params.category}, {date: 1, title: 1, img: 1, category: 1, comments: 1, likes: 1, shares: 1})
-                        .sort({date: 1})
+                    collection.find({categories: request.params.category}, {date: 1, title: 1, img: 1, categories: 1, comments: 1, likes: 1, shares: 1})
+                        .sort({date: -1})
                         .toArray(function(error, documents){
                             if(error){
                                 console.log("[/posts]: " + error);
@@ -122,9 +115,7 @@ app.get("/posts/:category", function(request, response){
 });
 
 app.get("/post/:postID", function(request, response){
-    var database = new mongodb.Db(databaseConfig.databaseName, server, {});
-
-    database.open(function (error, databaseConnection) {
+    MongoClient.connect(mongoUrl, {poolSize: databaseConfig.poolSize, autoReconnect: databaseConfig.autoReconnect}, function (error, databaseConnection) {
         if(error){
             console.log("[/posts/" + request.params.postID + "]: " + error);
             databaseConnection.close();
@@ -142,7 +133,7 @@ app.get("/post/:postID", function(request, response){
                     console.log("[/posts/" + request.params.postID + "]: Connection stablished with the collection 'posts'.");
                     collection
                         .find({_id: ObjectID(request.params.postID)})
-                        .sort({date: 1})
+                        .sort({date: -1})
                         .toArray(function(error, documents){
                             if(error){
                                 console.log("[/posts/" + request.params.postID + "]: " + error);
@@ -164,11 +155,43 @@ app.get("/post/:postID", function(request, response){
     });
 });
 
+app.get("/categories", function(request, response){
+    MongoClient.connect(mongoUrl, {poolSize: databaseConfig.poolSize, autoReconnect: databaseConfig.autoReconnect}, function(error, databaseConnection) {
+        if(error){
+            handleError("/categories", databaseConnection, error, response);
+        } else {
+            console.log("[/categories]: Connection stablished with mongodb://" + databaseConfig.host + ":" + databaseConfig.port + "/" + databaseConfig.databaseName);
+            databaseConnection.collection("categories", function(error, collection){
+                if(error){
+                    handleError("/categories", databaseConnection, error, response);
+                } else {
+                    console.log("[/categories]: Connection stablished with the collection 'categories'.");
+                    collection.find({}, {}).toArray(function(error, documents){
+                        if(error){
+                            handleError("/categories", databaseConnection, error, response);
+                        } else if(documents != null){
+                            databaseConnection.close();
+                            console.log("[/categories]: Connection closed with the db.");
+                            response.json(documents).status(200).end();
+                        } else {
+                            console.log("[/categories]: There isn't any category.");
+                            databaseConnection.close();
+                            console.log("[/categories]: Connection closed with the db.");
+                            response.json({message: "No existen categorías"}).status(204).end();
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+
 app.get("/*", function(request, response){
-    response.sendFile("/index.html", {"root": __dirname + "/../dist"});
+    if(request.originalUrl !== "/about_me.html" && request.originalUrl !== "/contacto.html/" && request.originalUrl !== "/contacto.html")
+        response.sendFile("/index.html", {"root": __dirname + "/../dist"});
 });
 
 
-app.listen(3000, function(){
-    console.log('Servidor iniciado con Express en puerto 3000')
+app.listen(3001, function(){
+    console.log('Servidor iniciado con Express en puerto 3001')
 });

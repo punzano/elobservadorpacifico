@@ -17,10 +17,39 @@ function setEventHandlers() {
 }
 
 function setActiveOption(optionHref) {
+  let section_name = $(".off-canvas-options a[href=\"" + optionHref + "\"] span").text();
+  $("#off-canvas-content-section-name").empty();
+  $("#off-canvas-content-section-name").text(section_name);
   $("#off-canvas-options li.active").removeClass("active");
   $(".off-canvas-options a[href=\"" + optionHref + "\"]").parent().addClass("active");
   if($("#off-canvas-options li.active").parent().hasClass("nested"))
     $("#off-canvas-options li.active").parent().addClass("is-active");
+
+  return section_name;
+}
+
+function loadCategories() {
+  if($("#categories-menu").children().length === 0) {
+    let ajaxRequest = new AjaxRequest({
+      ajaxUri: "/categories",
+      ajaxAsync: false,
+      onSuccessCallback: function(retrievedData) {
+        renderCategories(retrievedData);
+      }
+    });
+    ajaxRequest.execute();
+  }
+}
+
+function renderCategories(categories) {
+  for(let i = 0; i < categories.length; i++) {
+    $("#categories-menu").append(
+      "<li><a class=\"row align-justify\" href=\"" + categories[i].url + "\">" +
+        "<span class=\"columns\">" + categories[i].name + "</span>" +
+        "<i class=\"columns shrink align-self-middle fa fa-caret-right\" aria-hidden=\"true\"></i>" +
+      "</a></li>"
+    );
+  }
 }
 
 function loadLastEntries() {
@@ -36,9 +65,10 @@ function loadLastEntries() {
 
 function loadCategoryEntries(category) {
   let ajaxRequest = new AjaxRequest({
-    ajaxUri: "/posts" + category,
+    ajaxUri: "/posts/" + category,
     loadingDivID: "content-section",
     onSuccessCallback: function(retrievedData) {
+
       renderPostsBoxes(retrievedData);
     }
   });
@@ -59,6 +89,8 @@ function loadHtml(htmlName) {
 
 function renderPostsBoxes(postsData) {
   $("#content-section-loading").remove();
+  if(!$("#content-section").hasClass("row"))
+    $("#content-section").addClass("row");
   let $contentDiv = $("#content-section");
   for(let i = 0; i < postsData.length; i++) {
     let entryBox =
@@ -86,20 +118,22 @@ function setPostsBoxesEventHandlers() {
   $(".content-column-box").click(function(event){
     $("#content-section").empty();
     let entryID = event.currentTarget.id;
-    let ajaxRequest = new AjaxRequest({
-      ajaxUri: "/post/" + entryID,
-      loadingDivID: "content-section",
-      onSuccessCallback: function(retrievedData) {
-        renderPost(retrievedData);
-      }
-    });
-    ajaxRequest.execute();
+    let entryTitle = $(event.currentTarget).find(".content-column-box-title")[0].innerText;
+    page.redirect("/entrada/" + entryID);
   });
 }
 
-function renderPost(postData) {
-  $("#content-section-loading").remove();
-  $("#content-section").append(postData[0].html);
+function renderPost(entryID) {
+  let ajaxRequest = new AjaxRequest({
+    ajaxUri: "/post/" + entryID,
+    loadingDivID: "content-section",
+    onSuccessCallback: function(retrievedData) {
+      $("#content-section-loading").remove();
+      $("#content-section").removeClass("row");
+      $("#content-section").append(retrievedData[0].html);
+    }
+  });
+  ajaxRequest.execute();
 }
 
 function getYearFromDate(date) {

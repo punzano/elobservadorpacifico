@@ -14,7 +14,7 @@ let AjaxRequest = function(options) {
   var receivedData;
   var config = {
     ajaxUri: "",
-    loadingDivID: {},
+    loadingDivID: null,
     loadingImgSrc: "assets/img/loading.gif",
     ajaxType: 'GET',
     dataType: 'json',
@@ -47,9 +47,11 @@ let AjaxRequest = function(options) {
   }
 
   function beforeSend() {
-    $("#" + config.loadingDivID).empty();
-    $("#" + config.loadingDivID)
-      .html("<div id=\"" + config.loadingDivID + "-loading\" class=\"" + config.loadingDivID + "-loading row align-center\"><img class=\"align-self-middle\" src=\"" + config.loadingImgSrc + "\"></div>");
+    if(config.loadingDivID) {
+      $("#" + config.loadingDivID).empty();
+      $("#" + config.loadingDivID)
+        .html("<div id=\"" + config.loadingDivID + "-loading\" class=\"" + config.loadingDivID + "-loading row align-center\"><img class=\"align-self-middle\" src=\"" + config.loadingImgSrc + "\"></div>");
+    }
   }
 
   function error(xhr, status) {
