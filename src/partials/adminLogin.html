@@ -1,0 +1,41 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OP - Admin Web Login</title>
+    <link rel="shortcut icon" type="image/png" href="assets/img/favicon.png"/>
+    <link rel="stylesheet" href="assets/css/admin.css">
+  </head>
+  <body>
+    <div class="off-canvas-wrapper">
+      <div id="off-canvas-content" class="off-canvas-content column" data-off-canvas-content>
+        <div class="title-bar row">
+          <div class="title-bar-left">
+            <img src="assets/img/foto_principal.png" alt="">
+            <span id="off-canvas-content-section-name">OBSERVANDO PACÍFICAMENTE</span>
+          </div>
+        </div>
+        <div id="content-section" class="content-section">
+          <div class="login-wrapper row align-center">
+            <p class="column small-12 login-text">¡Bienvienido a la sección de administración de Observando Pacíficamente!</p>
+            <p class="column small-12 login-text">Logueate con:</p>
+            <a id="googleLoginButton" class="login-button-google button" href="/auth/google">
+              <i class="fa fa-google-plus" aria-hidden="true"></i>
+              Google
+            </a>
+          </div>
+        </div>
+        <div id="errorModal" class="error-modal tiny reveal" data-reveal>
+          <div id="errorModalText" class="error-modal-text lead">¡Cuenta no autorizada!</div>
+          <div class="error-modal-buttons buttons-container row align-center">
+            <button class="button column small-2" data-close aria-label="Close reveal" type="button">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="assets/js/admin/login.js"></script>
+  </body>
+</html>

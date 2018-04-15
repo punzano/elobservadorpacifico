@@ -1,0 +1,48 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OP - Admin Web</title>
+    <link rel="shortcut icon" type="image/png" href="assets/img/favicon.png"/>
+    <link rel="stylesheet" href="assets/css/admin.css">
+  </head>
+  <body>
+    <div class="off-canvas-wrapper">
+      <div id="off-canvas-content" class="off-canvas-content column" data-off-canvas-content>
+        <div class="title-bar row">
+          <div class="title-bar-left">
+            <img src="assets/img/foto_principal.png" alt="">
+            <span id="off-canvas-content-section-name">OBSERVANDO PACÍFICAMENTE</span>
+            <a href="/auth/google/logout" class="logout-button-google button">
+              <i class="fa fa-google-plus" aria-hidden="true"></i>
+              Log out
+            </a>
+          </div>
+        </div>
+        <div id="content-section" class="content-section">
+        </div>
+        <div id="confirmationModal" class="tiny reveal" data-reveal>
+          <div id="confirmationModalText" class="lead"></div>
+          <div class="buttons-container row align-justify">
+            <button id="continueButton" class="button column small-2" data-close aria-label="Close reveal" type="button">Continuar</button>
+            <button class="button column small-2" data-close aria-label="Close reveal" type="button">Cancelar</button>
+          </div>
+        </div>
+        <div id="addCategoryModal" class="tiny reveal" data-reveal>
+          <div id="addCategoryModalText" class="lead">
+            <label>
+              <input id="addCategoryModalTextName" type="text" placeholder="Introduce aquí el nombre de la nueva categoría">
+            </label>
+          </div>
+          <div class="buttons-container row align-justify">
+            <button id="add-category-modal-save-button" class="button column small-2" data-close aria-label="Close reveal" type="button">Guardar</button>
+            <button class="button column small-2" data-close aria-label="Close reveal" type="button">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="{{root}}assets/js/admin/app.js"></script>
+  </body>
+</html>

@@ -11,33 +11,39 @@ COMPATIBILITY:
 UNCSS_OPTIONS:
   html:
     - "src/**/*.html"
+
   ignore:
     - !!js/regexp .foundation-mq
     - !!js/regexp ^\.is-.*
 
 # Gulp will reference these paths when it copies files
 PATHS:
+
   # Path to dist folder
   dist: "dist"
+
   # Paths to static assets that aren't images, CSS, or JavaScript
   assets:
     - "src/assets/**/*"
     - "!src/assets/{img,js,scss}/**/*"
+
   # Paths to Sass libraries, which can then be loaded with @import
   sass:
     - "bower_components/foundation-sites/scss"
     - "bower_components/motion-ui/src"
     - "bower_components/font-awesome/scss"
-  # Paths to JavaScript libraries, which are combined into one file
-  javascript:
+    - "bower_components/trumbowyg/dist/ui/sass"
+    - "bower_components/trumbowyg/dist/plugins/colors/ui/sass/"
+    - "bower_components/foundation-daterangepicker/"
+
+  common_javascript:
     # Libraries required by Foundation
-    - "bower_components/jquery/dist/jquery.min.js"
+    - "bower_components/jquery/dist/jquery.js"
     - "bower_components/what-input/dist/what-input.js"
     # Core Foundation files
     - "bower_components/foundation-sites/js/foundation.core.js"
     - "bower_components/foundation-sites/js/foundation.util.*.js"
     # Individual Foundation components
-    # If you aren't using a component, just remove it from the list
     - "bower_components/foundation-sites/js/foundation.abide.js"
     - "bower_components/foundation-sites/js/foundation.accordion.js"
     - "bower_components/foundation-sites/js/foundation.accordionMenu.js"
@@ -48,23 +54,54 @@ PATHS:
     - "bower_components/foundation-sites/js/foundation.interchange.js"
     - "bower_components/foundation-sites/js/foundation.magellan.js"
     - "bower_components/foundation-sites/js/foundation.offcanvas.js"
-    - "bower_components/foundation-sites/js/foundation.orbit.js"
+    # - "bower_components/foundation-sites/js/foundation.orbit.js"
     - "bower_components/foundation-sites/js/foundation.responsiveMenu.js"
     - "bower_components/foundation-sites/js/foundation.responsiveToggle.js"
     - "bower_components/foundation-sites/js/foundation.reveal.js"
-    - "bower_components/foundation-sites/js/foundation.slider.js"
-    - "bower_components/foundation-sites/js/foundation.sticky.js"
-    - "bower_components/foundation-sites/js/foundation.tabs.js"
-    - "bower_components/foundation-sites/js/foundation.toggler.js"
-    - "bower_components/foundation-sites/js/foundation.tooltip.js"
-    - "bower_components/foundation-sites/js/foundation.zf.responsiveAccordionTabs.js"
+    # - "bower_components/foundation-sites/js/foundation.slider.js"
+    # - "bower_components/foundation-sites/js/foundation.sticky.js"
+    # - "bower_components/foundation-sites/js/foundation.tabs.js"
+    # - "bower_components/foundation-sites/js/foundation.toggler.js"
+    # - "bower_components/foundation-sites/js/foundation.tooltip.js"
+    # - "bower_components/foundation-sites/js/foundation.zf.responsiveAccordionTabs.js"
     # Other libraries and components
-    # - "bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"
     - "bower_components/page/page.js"
     # Paths to your own project code are here
-    - "src/assets/js/!(app).js"
+    - "src/assets/js/common/ajax-request.js"
+    - "src/assets/js/common/utilFunctions.js"
+
+  blog_javascript:
+    # Paths to your own project code are here
+    # - "src/assets/js/!(app).js"
     - "src/assets/js/app.js"
     - "src/assets/js/router.js"
-    - "src/assets/js/ajax-request.js"
+
+  admin_javascript:
+    # Other libraries and components
+    - "bower_components/trumbowyg/dist/trumbowyg.min.js"
+    - "bower_components/trumbowyg/dist/plugins/colors/trumbowyg.colors.min.js"
+    - "bower_components/trumbowyg/dist/plugins/noembed/trumbowyg.noembed.min.js"
+    - "bower_components/trumbowyg/dist/plugins/pasteimage/trumbowyg.pasteimage.min.js"
+    - "bower_components/trumbowyg/dist/plugins/preformatted/trumbowyg.preformatted.min.js"
+    - "bower_components/trumbowyg/dist/plugins/table/trumbowyg.table.min.js"
+    - "bower_components/trumbowyg/dist/plugins/template/trumbowyg.template.min.js"
+    - "bower_components/trumbowyg/dist/plugins/upload/trumbowyg.upload.min.js"
+    - "bower_components/jquery.floatThead/dist/jquery.floatThead.min.js"
+    - "bower_components/moment/moment.js"
+    - "bower_components/foundation-daterangepicker/daterangepicker.js"
+
+    # Paths to your own project code are here
+    - "src/assets/js/admin/!(app).js"
+    - "src/assets/js/admin/app.js"
+    - "src/assets/js/admin/adminWebModule.js"
+    - "src/assets/js/admin/homeModule.js"
+    - "src/assets/js/admin/editorModule.js"
+    - "src/assets/js/admin/routerModule.js"
+
+  login_javascript:
+    - "src/assets/js/admin/loginModule.js"
+    - "src/assets/js/admin/routerModule.js"
+
   fonts:
     - "bower_components/font-awesome/fonts/*.*"
+    - "bower_components/trumbowyg/dist/ui/icons.svg"

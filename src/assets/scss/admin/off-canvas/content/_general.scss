@@ -1,0 +1,13 @@
+.off-canvas-content {
+  height: 100%;
+  .content {
+    &-section, .jodit {
+      background-color: #EBEBEB;
+      height: 96%;
+      overflow-y: auto;
+      padding: 20px 40px;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}

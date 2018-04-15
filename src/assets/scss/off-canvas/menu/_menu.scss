@@ -72,6 +72,10 @@
     .fa-facebook:hover { color: #4267B2; }
     .fa-youtube:hover { color: #CC181E; }
   }
+
+  &-license {
+    margin-top: 15px;
+  }
 }
 
 @media print, screen and (min-width: 64em) {

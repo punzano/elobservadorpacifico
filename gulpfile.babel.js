@@ -9,6 +9,7 @@ import rimraf   from 'rimraf';
 import sherpa   from 'style-sherpa';
 import yaml     from 'js-yaml';
 import fs       from 'fs';
+import rename   from 'gulp-rename';
 
 // Load all Gulp plugins into one variable
 const $ = plugins();
@@ -25,10 +26,10 @@ function loadConfig() {
 }
 
 // Build the "dist" folder by running all of the below tasks
-gulp.task('build', gulp.series(clean, gulp.parallel(pages, otherPages, sass, javascript, images, fonts, copyOthers)));
+gulp.task('build', gulp.series(clean, gulp.parallel(pages, otherPages, sass, adminSass, blog_javascript, login_javascript, admin_javascript, images, fonts/*, copyOthers*/)));
 
-// Build the site, run the server, and watch for file changes
-gulp.task('default', gulp.series('build', /*server,*/ watch));
+// Build the site and watch for file changes
+gulp.task('default', gulp.series('build', watch));
 
 // Delete the "dist" folder
 // This happens every time a build starts
@@ -42,9 +43,11 @@ function pages() {
     .pipe(panini({
       root: 'src/pages/',
       layouts: 'src/layouts/',
-      partials: 'src/partials/',
-      // data: 'src/data/',
-      helpers: 'src/helpers/'
+      // pageLayouts: {
+      //   // All pages inside src/pages/blog will use the blog.html layout
+      //   'adminHome': 'adminHome'
+      // },
+      partials: 'src/partials/'
     }))
     .pipe(gulp.dest(PATHS.dist));
 }
@@ -62,7 +65,7 @@ function otherPages() {
 // Compile Sass into CSS
 // In production, the CSS is compressed
 function sass() {
-  return gulp.src('src/assets/scss/app.scss')
+  return gulp.src(['src/assets/scss/app.scss','src/assets/scss/admin/app.scss'])
     .pipe($.sourcemaps.init())
     .pipe($.sass({
       includePaths: PATHS.sass
@@ -78,11 +81,29 @@ function sass() {
     .pipe(gulp.dest(PATHS.dist + '/assets/css'))
     .pipe(browser.reload({ stream: true }));
 }
+function adminSass() {
+  return gulp.src('src/assets/scss/admin/app.scss')
+    .pipe($.sourcemaps.init())
+    .pipe($.sass({
+      includePaths: PATHS.sass
+    })
+    .on('error', $.sass.logError))
+    .pipe($.autoprefixer({
+      browsers: COMPATIBILITY
+    }))
+    .pipe(rename('admin.css'))
+    // Comment in the pipe below to run UnCSS in production
+    //.pipe($.if(PRODUCTION, $.uncss(UNCSS_OPTIONS)))
+    .pipe($.if(PRODUCTION, $.cssnano()))
+    .pipe($.if(!PRODUCTION, $.sourcemaps.write()))
+    .pipe(gulp.dest(PATHS.dist + '/assets/css'))
+    .pipe(browser.reload({ stream: true }));
+}
 
 // Combine JavaScript into one file
 // In production, the file is minified
-function javascript() {
-  return gulp.src(PATHS.javascript)
+function blog_javascript() {
+  return gulp.src(PATHS.common_javascript.concat(PATHS.blog_javascript))
     .pipe($.sourcemaps.init())
     .pipe($.babel({ignore: ['what-input.js']}))
     .pipe($.concat('app.js'))
@@ -91,6 +112,28 @@ function javascript() {
     ))
     .pipe($.if(!PRODUCTION, $.sourcemaps.write()))
     .pipe(gulp.dest(PATHS.dist + '/assets/js'));
+}
+function login_javascript() {
+  return gulp.src(PATHS.common_javascript.concat(PATHS.login_javascript))
+    .pipe($.sourcemaps.init())
+    .pipe($.babel({ignore: ['what-input.js']}))
+    .pipe($.concat('login.js'))
+    .pipe($.if(PRODUCTION, $.uglify()
+      .on('error', e => { console.log(e); })
+    ))
+    .pipe($.if(!PRODUCTION, $.sourcemaps.write()))
+    .pipe(gulp.dest(PATHS.dist + '/assets/js/admin'));
+}
+function admin_javascript() {
+  return gulp.src(PATHS.common_javascript.concat(PATHS.admin_javascript))
+    .pipe($.sourcemaps.init())
+    .pipe($.babel({ignore: ['what-input.js']}))
+    .pipe($.concat('app.js'))
+    .pipe($.if(PRODUCTION, $.uglify()
+      .on('error', e => { console.log(e); })
+    ))
+    .pipe($.if(!PRODUCTION, $.sourcemaps.write()))
+    .pipe(gulp.dest(PATHS.dist + '/assets/admin/js'));
 }
 
 // Copy images to the "dist" folder
@@ -117,25 +160,11 @@ function copyOthers() {
 
 // Watch for changes to static assets, pages, Sass, and JavaScript
 function watch() {
-  gulp.watch(PATHS.assets, copyOthers);
-  gulp.watch('src/pages/**/*.html').on('all', gulp.series(pages, browser.reload));
-  gulp.watch('src/partials/**/*.{html,hbs,handlebars}').on('all', gulp.series(otherPages, browser.reload));
-  gulp.watch('src/{layouts,partials}/**/*.html').on('all', gulp.series(resetPages, pages, browser.reload));
-  gulp.watch('src/assets/scss/**/*.scss').on('all', gulp.series(sass, browser.reload));
-  gulp.watch('src/assets/js/**/*.js').on('all', gulp.series(javascript, browser.reload));
-  gulp.watch('src/assets/img/**/*').on('all', gulp.series(images, browser.reload));
-}
-
-// Start a server with BrowserSync to preview the site in
-function server(done) {
-  browser.init({
-    server: PATHS.dist, port: PORT
-  });
-  done();
-}
-
-// Reload the browser with BrowserSync
-function reload(done) {
-  browser.reload();
-  done();
+  // gulp.watch(PATHS.assets, copyOthers);
+  gulp.watch('src/pages/**/*.html').on('all', gulp.series(pages));
+  gulp.watch('src/partials/**/*.{html,hbs,handlebars}').on('all', gulp.series(otherPages));
+  gulp.watch('src/{layouts,partials}/**/*.html').on('all', gulp.series(resetPages, pages));
+  gulp.watch('src/assets/scss/**/*.scss').on('all', gulp.series(sass, adminSass));
+  gulp.watch('src/assets/js/**/*.js').on('all', gulp.series(blog_javascript, login_javascript, admin_javascript));
+  gulp.watch('src/assets/img/**/*').on('all', gulp.series(images));
 }

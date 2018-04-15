@@ -6,6 +6,12 @@
       height: 96%;
       overflow-y: auto;
       padding: 20px 40px;
+
+      .no-entries-text {
+        width: 100%;
+        text-align: center;
+        align-self: center;
+      }
     }
   }
 }

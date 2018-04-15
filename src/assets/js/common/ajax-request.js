@@ -21,7 +21,8 @@ let AjaxRequest = function(options) {
     data: {},
     ajaxAsync: true,
     ajaxCache: true,
-    onSuccessCallback: ""
+    onSuccessCallback: "",
+    onErrorCallback: function() {}
   };
 
   $.extend(config, options);
@@ -56,7 +57,8 @@ let AjaxRequest = function(options) {
 
   function error(xhr, status) {
     if (status === "error") {
-      console.log("Error " + xhr.status + " " + xhr.statusText + ": " + xhr.responseText)
+      // console.log("Error " + xhr.status + " " + xhr.statusText + ": " + xhr.responseText)
+      config.onErrorCallback();
     }
   }
 

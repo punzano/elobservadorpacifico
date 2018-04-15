@@ -1,0 +1,33 @@
+.reveal {
+  border-radius: 5px;
+
+  &.save-post {
+    .lead {
+      margin-bottom: 10%;
+    }
+  }
+
+  .lead {
+    text-align: center;
+  }
+
+  .buttons-container {
+    .button {
+      margin-bottom: 0;
+      padding: 0.85em 1em;
+      border-radius: 5px;
+    }
+  }
+}
+
+.error-modal {
+  border: 1px solid red;
+
+  &-text {
+    color: red;
+  }
+
+  &-buttons {
+    margin-top: 10%;
+  }
+}

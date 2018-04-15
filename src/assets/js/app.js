@@ -58,6 +58,9 @@ function loadLastEntries() {
     loadingDivID: "content-section",
     onSuccessCallback: function(retrievedData) {
       renderPostsBoxes(retrievedData);
+    },
+    onErrorCallback: function() {
+      showNoEntriesText();
     }
   });
   ajaxRequest.execute();
@@ -68,8 +71,10 @@ function loadCategoryEntries(category) {
     ajaxUri: "/posts/" + category,
     loadingDivID: "content-section",
     onSuccessCallback: function(retrievedData) {
-
       renderPostsBoxes(retrievedData);
+    },
+    onErrorCallback: function() {
+      showNoEntriesText();
     }
   });
   ajaxRequest.execute();
@@ -92,26 +97,30 @@ function renderPostsBoxes(postsData) {
   if(!$("#content-section").hasClass("row"))
     $("#content-section").addClass("row");
   let $contentDiv = $("#content-section");
-  for(let i = 0; i < postsData.length; i++) {
-    let entryBox =
-      "<div class=\"content-column column large-3 medium-6 small-12\">" +
-        "<div id=\"" + postsData[i]._id + "\" class=\"content-column-box text-center\">" +
-          "<img class=\"content-column-box-img\" src=\"" + postsData[i].img + "\" alt=\"\">" +
-          "<span class=\"content-column-box-title\">" + postsData[i].title + "</span>" +
-        "</div>" +
-        "<div class=\"content-column-subbox text-center\">" +
-          "<div class=\"content-column-subbox-year\">" + getYearFromDate(postsData[i].date) + "</div>" +
-          "<div class=\"content-column-subbox-month\">" + getMonthFromDate(postsData[i].date) + "</div>" +
-          "<div class=\"content-column-subbox-day\">" + getDayFromDate(postsData[i].date) + "</div>" +
-          "<hr/>" +
-          "<div class=\"row align-spaced\"><i class=\"fa fa-comments column align-self-middle\" aria-hidden=\"true\"></i><span class=\"column align-self-middle\">" + postsData[i].comments + "</span></div>" +
-          "<div class=\"row align-spaced\"><i class=\"fa fa-thumbs-up column align-self-middle\" aria-hidden=\"true\"></i><span class=\"column align-self-middle\">" + postsData[i].likes + "</span></div>" +
-          "<div class=\"row align-spaced\"><i class=\"fa fa-share column align-self-middle\" aria-hidden=\"true\"></i><span class=\"column align-self-middle\">" + postsData[i].shares + "</span></div>" +
-        "</div>" +
-      "</div>";
-    $contentDiv.append(entryBox);
+  if(postsData.length > 0) {
+    for(let i = 0; i < postsData.length; i++) {
+      let entryBox =
+        "<div class=\"content-column column large-3 medium-6 small-12\">" +
+          "<div id=\"" + postsData[i]._id + "\" class=\"content-column-box text-center\">" +
+            "<img class=\"content-column-box-img\" src=\"" + postsData[i].img + "\" alt=\"\">" +
+            "<span class=\"content-column-box-title\">" + postsData[i].title + "</span>" +
+          "</div>" +
+          "<div class=\"content-column-subbox text-center\">" +
+            "<div class=\"content-column-subbox-year\">" + getYearFromDate(postsData[i].date) + "</div>" +
+            "<div class=\"content-column-subbox-month\">" + getMonthFromDate(postsData[i].date) + "</div>" +
+            "<div class=\"content-column-subbox-day\">" + getDayFromDate(postsData[i].date) + "</div>" +
+            "<hr/>" +
+            "<div class=\"row align-spaced\"><i class=\"fa fa-comments column align-self-middle\" aria-hidden=\"true\"></i><span class=\"column align-self-middle\">" + postsData[i].comments + "</span></div>" +
+            "<div class=\"row align-spaced\"><i class=\"fa fa-thumbs-up column align-self-middle\" aria-hidden=\"true\"></i><span class=\"column align-self-middle\">" + postsData[i].likes + "</span></div>" +
+            "<div class=\"row align-spaced\"><i class=\"fa fa-share column align-self-middle\" aria-hidden=\"true\"></i><span class=\"column align-self-middle\">" + postsData[i].shares + "</span></div>" +
+          "</div>" +
+        "</div>";
+      $contentDiv.append(entryBox);
+    }
+    setPostsBoxesEventHandlers();
+  } else {
+    showNoEntriesText();
   }
-  setPostsBoxesEventHandlers();
 }
 
 function setPostsBoxesEventHandlers() {
@@ -154,4 +163,9 @@ function getDayFromDate(date) {
 function renderHtml(htmlCode) {
   $("#content-section").empty();
   $("#content-section").html(htmlCode);
+}
+
+function showNoEntriesText() {
+  $("#content-section").empty();
+  $("#content-section").html("<h2 class=\"no-entries-text\"> Lo sentimos, pero por el momento no hay entradas disponibles en esta sección.</h2>");
 }

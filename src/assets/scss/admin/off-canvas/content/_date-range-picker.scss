@@ -1,0 +1,22 @@
+.daterangepicker {
+  z-index: 9999;
+  border: 1px solid;
+  box-shadow: 10px 10px 15px -5px rgba(0,0,0,0.75);
+
+  &.opened {
+    display: flex !important;
+  }
+
+  &.opensleft:before {
+    border-bottom: 7px solid black;
+    border-bottom-color: black;
+  }
+
+  .ranges {
+    .applyBtn {
+      bottom: 0;
+      right: 10px;
+      position: absolute;
+    }
+  }
+}
